@@ -137,12 +137,7 @@ select * from suprimentos;
 	SELECT SUM ()
 
 
-
-
-
-
-
--- 6.1 Um novo departamento foi criado: Inovações. Ele será alocado no escritório "Wayne Offices". Adicione-o ao banco de dados.
+-- 6.1 Um novo departamento foi criado: Inovações. Ele será alocado no escritório Adicione-o ao banco de dados.
 INSERT INTO departamentos(departamento_id,departamento_nome,escritorio_id) VALUES (14,'Inovações',1400);
  
 -- 6.2 O departamento de Inovações está sem funcionários. Transfira 2 funcionários do departamento de Tecnologia para Inovações.
@@ -155,10 +150,9 @@ WHERE departamento_id = 6;
 -- depois de escolher os 2 azarados vamos atualizar a tabela
 UPDATE funcionarios
 SET departamento_id = (SELECT departamento_id FROM departamentos WHERE departamento_nome = 'Inovações')
-WHERE funcionario_id IN (105, 107)  -- David Austin e Diana Lorentz
-  AND departamento_id = 6; -- só para ter certeza de que não vai mudar outra pessoa ou alguem que ja tenha sido transferida (Gabau, vc deve um chocolate para todos da JURIKI)
-  -- bora ver se deu certo ou se deu ruim
-  SELECT f.funcionario_id, f.primeiro_nome, f.sobrenome, d.departamento_nome
+WHERE funcionario_id IN (105, 107) 
+AND departamento_id = 6; 
+SELECT f.funcionario_id, f.primeiro_nome, f.sobrenome, d.departamento_nome
 FROM funcionarios f
 JOIN departamentos d ON f.departamento_id = d.departamento_id
 WHERE f.funcionario_id IN (105, 107);
@@ -169,17 +163,16 @@ UPDATE funcionarios SET salario = salario*1.1 WHERE departamento_id = 6;
 -- 6.4 O funcionário "Bruce Ernst" foi promovido a "Senior Web Developer" e recebeu um aumento para $5.000. Atualize suas informações.
  
  
--- adiconar o novo cargo pq não tem né
+-- adiconar o novo cargo pq não tem
 INSERT INTO cargos (cargo_nome, min_salario, max_salario)
 VALUES ('Senior Web Developer', 5000.00, 15000.00);
  
--- atualizar cargo e salário do Bruce Ernst pq o bichinho merece
 UPDATE funcionarios
 SET cargo_id = (SELECT cargo_id FROM cargos WHERE cargo_nome = 'Senior Web Developer'),
     salario  = 5000.00
 WHERE funcionario_id = 104;
  
--- verificar para ver se não deu ruim
+-- verificaçao
  
 SELECT f.funcionario_id, f.primeiro_nome, f.sobrenome,
        c.cargo_nome, f.salario
@@ -198,14 +191,14 @@ FROM funcionarios
 WHERE data_contratacao < '1990-01-01';
  
  
--- 2- remover dependentes vinculados (FK exige isso primeiro) maldita chave gringa.
+-- 2- remover dependentes vinculados
  
 DELETE FROM dependentes
 WHERE funcionario_id IN (
     SELECT funcionario_id FROM funcionarios
     WHERE data_contratacao < '1990-01-01'
     );
-    --  3- remover registros do audit_log vinculados (NÃO FAZ SENTIDO TER UM PEDIDO OU ALGUMA SOLICITAÇÃO DO FUNCIONARIO QUE ESTÁ APOSENTADO)
+    --  3- remover registros do audit_log vinculados
 DELETE FROM audit_log
 WHERE funcionario_id IN (
     SELECT funcionario_id FROM funcionarios
@@ -220,7 +213,7 @@ WHERE gerente_id IN (
     SELECT funcionario_id FROM funcionarios
     WHERE data_contratacao < '1990-01-01'
     );
-    -- PASSO 5- remover a referência de gerente (setar NULL) 
+    -- PASSO 5- remover a referência de gerente 
 UPDATE funcionarios
 SET gerente_id = NULL
 WHERE gerente_id IN (
@@ -230,7 +223,7 @@ WHERE gerente_id IN (
     ) AS aposentados
 );
  
--- PASSO 6: agora sim, bora colocar os idosos no modo economia de bateria
+-- PASSO 6:
 DELETE FROM funcionarios
 WHERE data_contratacao < '1990-01-01';
  
@@ -241,5 +234,5 @@ FROM funcionarios
 WHERE data_contratacao < '1990-01-01';
  
  
--- 6.5 Adicione um novo suprimento ao escritório "Wayne Offices (id 1400)": 15 unidades de "Headsets" com preço unitário de $150 cada.
+-- 6.5 Adicione um novo suprimento ao escritório 
 INSERT INTO suprimentos (suprimento_nome,quantidade_comprada,custo,escritorio_id) VALUES ('Headsets', 15, 2250.00, 1400);
